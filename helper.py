@@ -24,23 +24,27 @@ def draw_3d(x,y,z, xAxisTitle, yAxisTitle, zAxisTitle):
 def complexAGWN(variance, size):
     n = size[0]
     col = lambda : np.random.normal(loc=0, scale= variance*1/np.sqrt(2), size=(n,2)).view(np.complex)
-    return np.hstack([ col() for j in range(size[1]) ])
+    return np.hstack([ col()/np.sqrt(2) for j in range(size[1]) ])
 
-def awgn(s,SNRdB):
-    gamma = 10**(SNRdB/10) #SNR to linear scale
-    if s.ndim==1: # if s is single dimensional vector
-        try:
-            P=np.sum(np.abs(s)**2)/len(s) #Actual power in the vector
-        except:
-            P=np.sum(np.abs(s)**2)/len(s)
-    else: # multi-dimensional signals like MFSK
-        P=np.sum(np.sum(np.abs(s)**2))/len(s) # if s is a matrix [MxN]
-    N0=P/gamma # Find the noise spectral density
-    n = np.sqrt(N0/2)*(np.random.standard_normal(s.shape)+1j*np.random.standard_normal(s.shape))
-    return n
+def awgn(x,snr):
+    snr = 10 ** (snr / 10.0)
+    xpower = np.sum(x**2) / len(x)
+    npower = xpower / snr
+    noise = np.random.randn(len(x)) * np.sqrt(npower)
+    return x+noise
 
 def toep(u):
     def column(u,k):
         return cp.vstack( u[i-k] if i-k >= 0 else cp.conj(u[k-i]) for i in range(u.shape[0]))
     return cp.hstack([column(u, j) for j in range(u.shape[0])])
+
+def RMSE(estimates, labels):
+  if (len(estimates) != len(labels)):
+    return -1
+  squareError = (np.array(labels) - np.array(estimates))**2
+  return np.sqrt(np.mean(squareError))
+
+def findNMaxPeaks(y ,list, n):
+    sortedPeaks = np.argsort(y[list])[::-1]
+    return sortedPeaks[0:n]
 

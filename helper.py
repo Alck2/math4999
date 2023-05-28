@@ -20,23 +20,12 @@ def draw_3d(x,y,z, xAxisTitle, yAxisTitle, zAxisTitle):
     ax.set_zlabel(zAxisTitle)
     plt.show()
 
-
-def complexAGWN(variance, size):
-    n = size[0]
-    col = lambda : np.random.normal(loc=0, scale= variance*1/np.sqrt(2), size=(n,2)).view(np.complex)
-    return np.hstack([ col()/np.sqrt(2) for j in range(size[1]) ])
-
 def awgn(x,snr):
     snr = 10 ** (snr / 10.0)
     xpower = np.sum(x**2) / len(x)
     npower = xpower / snr
     noise = np.random.randn(len(x)) * np.sqrt(npower)
     return x+noise
-
-def toep(u):
-    def column(u,k):
-        return cp.vstack( u[i-k] if i-k >= 0 else cp.conj(u[k-i]) for i in range(u.shape[0]))
-    return cp.hstack([column(u, j) for j in range(u.shape[0])])
 
 def RMSE(estimates, labels):
   if (len(estimates) != len(labels)):

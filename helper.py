@@ -2,8 +2,18 @@ import numpy as np
 import cvxpy as cp
 import matplotlib.pyplot as plt
 
+# Input: numpy array
+# Ouput: numpy array
+# Returns the conjugate transpose of a numpy array
 hermitian = lambda npArr : npArr.conj().transpose(); 
 
+# Input:
+#   x: arrayType
+#   y: arrayType
+#   xAxisTitle: string
+#   yAxisTitle: string
+#   title: string
+# Draw a simple 2d line graph for the given x and y with xAxisTitle, yAxisTitle, and title
 def draw( x, y, xAxisTitle, yAxisTitle, title ):
     fig, axs = plt.subplots()
     axs.set_title(title)
@@ -11,6 +21,15 @@ def draw( x, y, xAxisTitle, yAxisTitle, title ):
     axs.set_xlabel(xAxisTitle)
     axs.set_ylabel(yAxisTitle)
 
+# Input:
+#   x: arrayType
+#   y: arrayType
+#   z: arrayType
+#   xAxisTitle: string
+#   yAxisTitle: string
+#   zAxisTitle: string
+#   title: string
+# Draw a simple 3d line graph for the given x, y, and z with xAxisTitle, yAxisTitle, zAxisTitle, and title
 def draw_3d(x,y,z, xAxisTitle, yAxisTitle, zAxisTitle):
     ax = plt.figure().add_subplot(projection='3d')
     ax.plot(x, y, z, label="signal 1")
@@ -20,6 +39,11 @@ def draw_3d(x,y,z, xAxisTitle, yAxisTitle, zAxisTitle):
     ax.set_zlabel(zAxisTitle)
     plt.show()
 
+# Input:
+#   x: 1d numpy array
+#   snr: double
+# Output: 1d numpy array with same size as x
+# Given signal x, returns the signal with Additive Gaussian White Noise of Signal-to-Noise Ration snr.
 def awgn(x,snr):
     snr = 10 ** (snr / 10.0)
     xpower = np.sum(x**2) / len(x)
@@ -27,12 +51,24 @@ def awgn(x,snr):
     noise = np.random.randn(len(x)) * np.sqrt(npower)
     return x+noise
 
+# Input:
+#   estimates: arrayType
+#   labels: arrayType
+# Output: double
+# Returns the root-mean-square error between the estimates and labels if estimates and labels are with the same size.
+# -1 otherwise.
 def RMSE(estimates, labels):
   if (len(estimates) != len(labels)):
     return -1
   squareError = (np.array(labels) - np.array(estimates))**2
   return np.sqrt(np.mean(squareError))
 
+# Input:
+#   y: ArrayType
+#   list: ArrayType
+#   n: integer
+# Output: ArrayType
+# Return the top n highest peaks according to y
 def findNMaxPeaks(y ,list, n):
     sortedPeaks = np.argsort(y[list])[::-1]
     return sortedPeaks[0:n]
